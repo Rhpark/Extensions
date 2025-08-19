@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Claude Context File
+CLAUDE.md
+
+# Syntax check script
+syntax_check.py
