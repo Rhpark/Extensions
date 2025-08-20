@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    // Easy Extensions Library
+    implementation(project(":easy_extensions"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

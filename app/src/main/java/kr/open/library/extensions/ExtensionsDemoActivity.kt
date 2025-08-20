@@ -45,8 +45,10 @@ class ExtensionsDemoActivity : AppCompatActivity() {
             
         // ✅ Map operations - use Kotlin stdlib
         val userSettings = mapOf("theme" to "dark", "notifications" to "enabled")
-        val theme = userSettings.getOrElse("theme") { "light" } // Using stdlib function
-        val language = userSettings.getOrElse("language") { "en" } // Using stdlib function
+        val theme = userSettings["theme"].ifNotNull { 
+            Toast.makeText(this, "Theme: $it", Toast.LENGTH_SHORT).show()
+        } ?: "light"
+        val language = userSettings["language"] ?: "en"
         
         // ✅ Our custom Map extension
         userSettings.ifNotEmpty { settings ->
