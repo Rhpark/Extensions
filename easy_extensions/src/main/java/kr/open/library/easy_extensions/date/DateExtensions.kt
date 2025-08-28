@@ -10,14 +10,15 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 
-
 /**
  * ex)
  * format = "HH:mm:ss dd/MM/yyyy"
  * locale = Locale.US
  */
-public fun Long.timeDateToString(format: String, locale: Locale = Locale.US): String =
-    SimpleDateFormat(format, locale).format(Date(this))
+public fun Long.timeDateToString(
+    format: String,
+    locale: Locale = Locale.US,
+): String = SimpleDateFormat(format, locale).format(Date(this))
 
 /**
  * ex)
@@ -25,15 +26,20 @@ public fun Long.timeDateToString(format: String, locale: Locale = Locale.US): St
  * locale = Locale.US
  * return milliseconds
  */
-public fun String.timeDateToLong(format: String, locale: Locale = Locale.US): Long =
+public fun String.timeDateToLong(
+    format: String,
+    locale: Locale = Locale.US,
+): Long =
     SimpleDateFormat(format, locale).parse(this)?.time
         ?: throw IllegalArgumentException("Invalid time string")
 
-public fun String.timeDateToDate(format: String, locale: Locale = Locale.US): Date? {
+public fun String.timeDateToDate(
+    format: String,
+    locale: Locale = Locale.US,
+): Date? {
     val dateFormat = SimpleDateFormat(format, locale)
     return dateFormat.parse(this)
 }
-
 
 /**
  * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -46,7 +52,10 @@ public fun String.timeDateToDate(format: String, locale: Locale = Locale.US): Da
 public fun Long.toLocalDateTime(): LocalDateTime =
     Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
 
-public fun LocalDateTime.format(pattern: String, locale: Locale = Locale.getDefault()): String {
+public fun LocalDateTime.format(
+    pattern: String,
+    locale: Locale = Locale.getDefault(),
+): String {
     val formatter = DateTimeFormatter.ofPattern(pattern, locale)
     return this.format(formatter)
 }
@@ -58,38 +67,37 @@ public fun LocalDateTime.format(pattern: String, locale: Locale = Locale.getDefa
  *     Logx.d("Formatted Date: $formatted")
  * }
  */
-public fun Date.toLocalDateTime(): LocalDateTime =
-    this.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+public fun Date.toLocalDateTime(): LocalDateTime = this.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
 
-public fun Date.formatToString(pattern: String, locale: Locale = Locale.getDefault()): String =
-    this.toLocalDateTime().format(pattern, locale)
-
+public fun Date.formatToString(
+    pattern: String,
+    locale: Locale = Locale.getDefault(),
+): String = this.toLocalDateTime().format(pattern, locale)
 
 /**
  * ex)
  * format = "HH:mm:ss dd/MM/yyyy"
  * locale = Locale.US
  */
-public fun Date.formattedToString(format: String, locale: Locale = Locale.US):String =
-    SimpleDateFormat(format, locale).format(this)
+public fun Date.formattedToString(
+    format: String,
+    locale: Locale = Locale.US,
+): String = SimpleDateFormat(format, locale).format(this)
 
 /**
  * @return n Seconds (Long)
  */
-public fun Date.timeDifferenceInSeconds(other: Date): Long =
-    Math.abs(this.time - other.time) / 1000
+public fun Date.timeDifferenceInSeconds(other: Date): Long = Math.abs(this.time - other.time) / 1000
 
 /**
  * @return n Minutes (Long)
  */
-public fun Date.timeDifferenceInMinutes(other: Date): Long =
-    Math.abs(this.time - other.time) / (1000 * 60)
+public fun Date.timeDifferenceInMinutes(other: Date): Long = Math.abs(this.time - other.time) / (1000 * 60)
 
 /**
  * @return n Hours (Long)
  */
-public fun Date.timeDifferenceInHours(other: Date): Long =
-    Math.abs(this.time - other.time) / (1000 * 3600)
+public fun Date.timeDifferenceInHours(other: Date): Long = Math.abs(this.time - other.time) / (1000 * 3600)
 
 /**
  * @return n Hours (Long)
@@ -117,14 +125,21 @@ public fun LocalDate.monthsDifference(other: LocalDate): Long = ChronoUnit.MONTH
 public fun LocalDate.yearsDifference(other: LocalDate): Long = ChronoUnit.YEARS.between(this, other)
 
 public fun Long.secondsToMinutes(): Long = this / 60
+
 public fun Long.secondsToHours(): Long = this / 3600
+
 public fun Long.secondsToDays(): Long = this / 86400
 
 public fun Long.millisecondsToSeconds(): Long = this / 1000
+
 public fun Long.millisecondsToMinutes(): Long = this / (1000 * 60)
+
 public fun Long.millisecondsToHours(): Long = this / (1000 * 3600)
+
 public fun Long.millisecondsToDays(): Long = this / (1000 * 86400)
 
 public fun Int.secondsToMinutes(): Int = this / 60
+
 public fun Int.secondsToHours(): Int = this / 3600
+
 public fun Int.secondsToDays(): Int = this / 86400

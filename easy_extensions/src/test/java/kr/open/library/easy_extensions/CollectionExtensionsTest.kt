@@ -1,15 +1,14 @@
 package kr.open.library.easy_extensions
 
 import kr.open.library.easy_extensions.collection.*
-import org.junit.Test
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Unit tests for CollectionExtensions
  * Tests only cover functions that are NOT available in Kotlin stdlib
  */
 class CollectionExtensionsTest {
-
     @Test
     fun `filterIf should filter when condition is true`() {
         val numbers = listOf(1, 2, 3, 4, 5, 6)
@@ -28,12 +27,12 @@ class CollectionExtensionsTest {
     fun `ifNotEmpty should execute action for non-empty list`() {
         val numbers = listOf(1, 2, 3)
         var actionExecuted = false
-        
-        numbers.ifNotEmpty { 
+
+        numbers.ifNotEmpty {
             actionExecuted = true
             assertEquals(3, it.size)
         }
-        
+
         assertTrue(actionExecuted)
     }
 
@@ -41,11 +40,11 @@ class CollectionExtensionsTest {
     fun `ifNotEmpty should not execute action for empty list`() {
         val numbers = emptyList<Int>()
         var actionExecuted = false
-        
-        numbers.ifNotEmpty { 
+
+        numbers.ifNotEmpty {
             actionExecuted = true
         }
-        
+
         assertFalse(actionExecuted)
     }
 
@@ -53,11 +52,11 @@ class CollectionExtensionsTest {
     fun `ifEmpty should execute action for empty list`() {
         val numbers = emptyList<Int>()
         var actionExecuted = false
-        
-        numbers.ifEmpty { 
+
+        numbers.ifEmpty {
             actionExecuted = true
         }
-        
+
         assertTrue(actionExecuted)
     }
 
@@ -65,11 +64,11 @@ class CollectionExtensionsTest {
     fun `ifEmpty should not execute action for non-empty list`() {
         val numbers = listOf(1, 2, 3)
         var actionExecuted = false
-        
-        numbers.ifEmpty { 
+
+        numbers.ifEmpty {
             actionExecuted = true
         }
-        
+
         assertFalse(actionExecuted)
     }
 
@@ -79,12 +78,12 @@ class CollectionExtensionsTest {
     fun `map ifNotEmpty should execute action for non-empty map`() {
         val map = mapOf("a" to 1, "b" to 2)
         var actionExecuted = false
-        
-        map.ifNotEmpty { 
+
+        map.ifNotEmpty {
             actionExecuted = true
             assertEquals(2, it.size)
         }
-        
+
         assertTrue(actionExecuted)
     }
 
@@ -92,11 +91,11 @@ class CollectionExtensionsTest {
     fun `map ifNotEmpty should not execute action for empty map`() {
         val map = emptyMap<String, Int>()
         var actionExecuted = false
-        
-        map.ifNotEmpty { 
+
+        map.ifNotEmpty {
             actionExecuted = true
         }
-        
+
         assertFalse(actionExecuted)
     }
 }

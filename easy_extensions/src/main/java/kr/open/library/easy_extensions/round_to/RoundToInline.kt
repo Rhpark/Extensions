@@ -7,11 +7,10 @@ import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
-
 /**
  * ex) 3.14159.roundTo(2) -> 3.14
  */
-public inline fun Double.roundTo(decimals:Int) :Double {
+public inline fun Double.roundTo(decimals: Int): Double {
     val factor = 10.0.pow(decimals.toDouble())
     return round(this * factor) / factor
 }
@@ -31,7 +30,6 @@ public inline fun Double.roundDown(decimals: Int): Double {
     val factor = 10.0.pow(decimals.toDouble())
     return floor(this * factor) / factor
 }
-
 
 /**
  * ex) 3.14159.roundTo(2) -> 3.14f
@@ -56,7 +54,6 @@ public inline fun Float.roundDown(decimals: Int): Float {
     val factor = 10f.pow(decimals.toFloat())
     return floor(this * factor) / factor
 }
-
 
 /**
  * 1234.roundTo(2) -> 1200

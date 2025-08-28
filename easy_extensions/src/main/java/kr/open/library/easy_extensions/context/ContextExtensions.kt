@@ -1,5 +1,6 @@
 package kr.open.library.easy_extensions.context
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.CheckResult
 import androidx.core.content.ContextCompat
 import kr.open.library.logcat.Logx
 
@@ -16,52 +18,69 @@ import kr.open.library.logcat.Logx
 /**
  * Starts an activity with optional extras and intent flags
  * Handles ActivityNotFoundException gracefully with logging
- * 
+ *
  * @param activity The target activity class
  * @param extras Optional bundle of extras to pass
  * @param intentFlags Optional array of intent flags to add
- * 
+ *
  * Example:
  * startActivity(ProfileActivity::class.java, bundleOf("user_id" to 123), intArrayOf(Intent.FLAG_ACTIVITY_NEW_TASK))
  */
 public inline fun Context.startActivity(
-    activity: Class<*>, 
-    extras: Bundle? = null, 
-    intentFlags: IntArray? = null
+    activity: Class<*>,
+    extras: Bundle? = null,
+    intentFlags: IntArray? = null,
 ) {
     try {
-        val intent = Intent(this, activity).apply {
-            extras?.let { putExtras(it) }
-            intentFlags?.forEach { flag -> addFlags(flag) }
-        }
+        val intent =
+            Intent(this, activity).apply {
+                extras?.let { putExtras(it) }
+                // 안전 가드: Activity가 아닌 Context에서 호출 시 FLAG_ACTIVITY_NEW_TASK 자동 추가
+                // Safety guard: Automatically add FLAG_ACTIVITY_NEW_TASK when called from non-Activity Context
+                if (this@startActivity !is Activity) {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                intentFlags?.forEach { flag -> addFlags(flag) }
+            }
         startActivity(intent)
     } catch (e: ActivityNotFoundException) {
         Logx.e("Activity not found: ${activity.simpleName}. Make sure it's declared in AndroidManifest.xml")
+    } catch (e: RuntimeException) {
+        // Context가 Activity가 아닐 때 발생할 수 있는 오류 처리
+        // Handle errors that can occur when Context is not an Activity
+        Logx.e("Failed to start activity from non-Activity context: ${activity.simpleName}")
     }
 }
 
 /**
  * Safely starts an activity, returning true if successful, false otherwise
- * 
+ *
  * @param activity The target activity class
  * @param extras Optional bundle of extras to pass
  * @param intentFlags Optional array of intent flags to add
  * @return true if activity was started successfully, false otherwise
- * 
+ *
  * Example:
  * val success = startActivitySafely(ProfileActivity::class.java)
  * if (!success) showError("Cannot open profile")
  */
+@CheckResult
 public inline fun Context.startActivitySafely(
-    activity: Class<*>, 
-    extras: Bundle? = null, 
-    intentFlags: IntArray? = null
+    activity: Class<*>,
+    extras: Bundle? = null,
+    intentFlags: IntArray? = null,
 ): Boolean {
     return try {
-        val intent = Intent(this, activity).apply {
-            extras?.let { putExtras(it) }
-            intentFlags?.forEach { flag -> addFlags(flag) }
-        }
+        val intent =
+            Intent(this, activity).apply {
+                extras?.let { putExtras(it) }
+                // 안전 가드: Activity가 아닌 Context에서 호출 시 FLAG_ACTIVITY_NEW_TASK 자동 추가
+                // Safety guard: Automatically add FLAG_ACTIVITY_NEW_TASK when called from non-Activity Context
+                if (this@startActivitySafely !is Activity) {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                intentFlags?.forEach { flag -> addFlags(flag) }
+            }
         startActivity(intent)
         true
     } catch (e: ActivityNotFoundException) {
@@ -70,15 +89,20 @@ public inline fun Context.startActivitySafely(
     } catch (e: SecurityException) {
         Logx.e("Security exception when starting activity: ${activity.simpleName}")
         false
+    } catch (e: RuntimeException) {
+        // Context가 Activity가 아닐 때 발생할 수 있는 오류 처리
+        // Handle errors that can occur when Context is not an Activity
+        Logx.e("Failed to start activity from non-Activity context: ${activity.simpleName}")
+        false
     }
 }
 
 /**
  * Checks if a specific permission is granted
- * 
+ *
  * @param permission The permission to check
  * @return true if permission is granted, false otherwise
- * 
+ *
  * Example:
  * ```
  * if (hasPermission(Manifest.permission.CAMERA)) {
@@ -86,13 +110,14 @@ public inline fun Context.startActivitySafely(
  * }
  * ```
  */
+@CheckResult
 public fun Context.hasPermission(permission: String): Boolean =
     ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 /**
  * Opens the app's settings page in system settings
  * Useful for directing users to grant permissions manually
- * 
+ *
  * Example:
  * ```
  * openAppSettings()
@@ -100,10 +125,11 @@ public fun Context.hasPermission(permission: String): Boolean =
  */
 public fun Context.openAppSettings() {
     try {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = Uri.fromParts("package", packageName, null)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(intent)
     } catch (e: ActivityNotFoundException) {
         Logx.e("Cannot open app settings")
@@ -112,20 +138,22 @@ public fun Context.openAppSettings() {
 
 /**
  * Opens a web URL in the default browser
- * 
+ *
  * @param url The URL to open
  * @return true if successfully opened, false otherwise
- * 
+ *
  * Example:
  * ```
  * val success = openUrl("https://www.example.com")
  * ```
  */
+@CheckResult
 public fun Context.openUrl(url: String): Boolean {
     return try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(intent)
         true
     } catch (e: ActivityNotFoundException) {
@@ -136,20 +164,22 @@ public fun Context.openUrl(url: String): Boolean {
 
 /**
  * Opens the dialer with a pre-filled phone number
- * 
+ *
  * @param phoneNumber The phone number to dial
  * @return true if successfully opened, false otherwise
- * 
+ *
  * Example:
  * ```
  * val success = dialPhoneNumber("+1-555-123-4567")
  * ```
  */
+@CheckResult
 public fun Context.dialPhoneNumber(phoneNumber: String): Boolean {
     return try {
-        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber")).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(intent)
         true
     } catch (e: ActivityNotFoundException) {
@@ -160,29 +190,31 @@ public fun Context.dialPhoneNumber(phoneNumber: String): Boolean {
 
 /**
  * Opens the default email app with pre-filled email
- * 
+ *
  * @param email The email address
  * @param subject Optional email subject
  * @param body Optional email body
  * @return true if successfully opened, false otherwise
- * 
+ *
  * Example:
  * ```
  * sendEmail("support@example.com", "Bug Report", "Description of the issue...")
  * ```
  */
+@CheckResult
 public fun Context.sendEmail(
     email: String,
     subject: String? = null,
-    body: String? = null
+    body: String? = null,
 ): Boolean {
     return try {
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:$email")
-            subject?.let { putExtra(Intent.EXTRA_SUBJECT, it) }
-            body?.let { putExtra(Intent.EXTRA_TEXT, it) }
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intent =
+            Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:$email")
+                subject?.let { putExtra(Intent.EXTRA_SUBJECT, it) }
+                body?.let { putExtra(Intent.EXTRA_TEXT, it) }
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(intent)
         true
     } catch (e: ActivityNotFoundException) {
@@ -193,32 +225,35 @@ public fun Context.sendEmail(
 
 /**
  * Shares text content using the system share dialog
- * 
+ *
  * @param text The text to share
  * @param subject Optional subject for the share
  * @param chooserTitle Optional title for the chooser dialog
  * @return true if successfully opened, false otherwise
- * 
+ *
  * Example:
  * ```
  * shareText("Check out this app!", subject = "App Recommendation")
  * ```
  */
+@CheckResult
 public fun Context.shareText(
     text: String,
     subject: String? = null,
-    chooserTitle: String = "Share via"
+    chooserTitle: String = "Share via",
 ): Boolean {
     return try {
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, text)
-            subject?.let { putExtra(Intent.EXTRA_SUBJECT, it) }
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        val chooser = Intent.createChooser(shareIntent, chooserTitle).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val shareIntent =
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+                subject?.let { putExtra(Intent.EXTRA_SUBJECT, it) }
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        val chooser =
+            Intent.createChooser(shareIntent, chooserTitle).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(chooser)
         true
     } catch (e: ActivityNotFoundException) {
@@ -229,25 +264,28 @@ public fun Context.shareText(
 
 /**
  * Shows a toast message (convenience method)
- * 
+ *
  * @param message The message to display
  * @param duration Toast duration (default: Toast.LENGTH_SHORT)
- * 
+ *
  * Example:
  * ```
  * showToast("Operation completed successfully")
  * ```
  */
-public fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+public fun Context.showToast(
+    message: String,
+    duration: Int = Toast.LENGTH_SHORT,
+) {
     Toast.makeText(this, message, duration).show()
 }
 
 /**
  * Checks if an app with the given package name is installed
- * 
+ *
  * @param packageName The package name to check
  * @return true if app is installed, false otherwise
- * 
+ *
  * Example:
  * ```
  * if (isAppInstalled("com.whatsapp")) {
@@ -255,6 +293,7 @@ public fun Context.showToast(message: String, duration: Int = Toast.LENGTH_SHORT
  * }
  * ```
  */
+@CheckResult
 public fun Context.isAppInstalled(packageName: String): Boolean {
     return try {
         packageManager.getPackageInfo(packageName, 0)

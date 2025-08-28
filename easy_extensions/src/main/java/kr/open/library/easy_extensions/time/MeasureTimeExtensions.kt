@@ -16,13 +16,19 @@ public inline fun <T> measureTimeNanos(block: () -> T): Pair<T, Long> {
     return measureTimeWithResult(System::nanoTime, block)
 }
 
-public inline fun measureTime(timeProvider: () -> Long, block: () -> Unit): Long {
+public inline fun measureTime(
+    timeProvider: () -> Long,
+    block: () -> Unit,
+): Long {
     val start = timeProvider()
     block()
     return timeProvider() - start
 }
 
-public inline fun <T> measureTimeWithResult(timeProvider: () -> Long, block: () -> T): Pair<T, Long> {
+public inline fun <T> measureTimeWithResult(
+    timeProvider: () -> Long,
+    block: () -> T,
+): Pair<T, Long> {
     val start = timeProvider()
     val result = block()
     return Pair(result, timeProvider() - start)

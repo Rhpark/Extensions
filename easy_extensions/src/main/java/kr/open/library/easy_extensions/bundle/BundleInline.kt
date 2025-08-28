@@ -3,7 +3,10 @@ package kr.open.library.easy_extensions.bundle
 import android.os.Bundle
 import kr.open.library.logcat.Logx
 
-public inline fun <reified T> Bundle.getValue(key: String, defaultValue: T): T {
+public inline fun <reified T> Bundle.getValue(
+    key: String,
+    defaultValue: T,
+): T {
     return if (containsKey(key)) {
         when (T::class) {
             Int::class -> getInt(key, defaultValue as Int) as T
@@ -12,8 +15,8 @@ public inline fun <reified T> Bundle.getValue(key: String, defaultValue: T): T {
             Long::class -> getLong(key, defaultValue as Long) as T
             Double::class -> getDouble(key, defaultValue as Double) as T
             String::class -> getString(key, defaultValue as String) as T
-            Char::class -> getChar(key,defaultValue as Char) as T
-            Short::class -> getShort(key,defaultValue as Short) as T
+            Char::class -> getChar(key, defaultValue as Char) as T
+            Short::class -> getShort(key, defaultValue as Short) as T
             Byte::class -> getByte(key, defaultValue as Byte) as T
             ByteArray::class -> (getByteArray(key) ?: defaultValue as ByteArray) as T
             Bundle::class -> (getBundle(key) ?: defaultValue as Bundle) as T

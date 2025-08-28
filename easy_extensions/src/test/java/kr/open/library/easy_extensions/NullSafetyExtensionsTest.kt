@@ -1,24 +1,23 @@
 package kr.open.library.easy_extensions
 
 import kr.open.library.easy_extensions.null_safety.*
-import org.junit.Test
 import org.junit.Assert.*
+import org.junit.Test
 
 /**
  * Unit tests for NullSafetyExtensions
  */
 class NullSafetyExtensionsTest {
-
     @Test
     fun `ifNotNull should execute action when value is not null`() {
         val value = "test"
         var actionExecuted = false
-        
-        value.ifNotNull { 
+
+        value.ifNotNull {
             actionExecuted = true
             assertEquals("test", it)
         }
-        
+
         assertTrue(actionExecuted)
     }
 
@@ -26,11 +25,11 @@ class NullSafetyExtensionsTest {
     fun `ifNotNull should not execute action when value is null`() {
         val value: String? = null
         var actionExecuted = false
-        
-        value.ifNotNull { 
+
+        value.ifNotNull {
             actionExecuted = true
         }
-        
+
         assertFalse(actionExecuted)
     }
 
@@ -38,11 +37,11 @@ class NullSafetyExtensionsTest {
     fun `ifNull should execute action when value is null`() {
         val value: String? = null
         var actionExecuted = false
-        
-        value.ifNull { 
+
+        value.ifNull {
             actionExecuted = true
         }
-        
+
         assertTrue(actionExecuted)
     }
 
@@ -50,11 +49,11 @@ class NullSafetyExtensionsTest {
     fun `ifNull should not execute action when value is not null`() {
         val value: String? = "test"
         var actionExecuted = false
-        
-        value.ifNull { 
+
+        value.ifNull {
             actionExecuted = true
         }
-        
+
         assertFalse(actionExecuted)
     }
 
@@ -96,17 +95,17 @@ class NullSafetyExtensionsTest {
         val value: String? = "test"
         var notNullExecuted = false
         var nullExecuted = false
-        
+
         value.ifNotNullOrElse(
-            notNullAction = { 
+            notNullAction = {
                 notNullExecuted = true
                 assertEquals("test", it)
             },
-            nullAction = { 
+            nullAction = {
                 nullExecuted = true
-            }
+            },
         )
-        
+
         assertTrue(notNullExecuted)
         assertFalse(nullExecuted)
     }
@@ -116,16 +115,16 @@ class NullSafetyExtensionsTest {
         val value: String? = null
         var notNullExecuted = false
         var nullExecuted = false
-        
+
         value.ifNotNullOrElse(
-            notNullAction = { 
+            notNullAction = {
                 notNullExecuted = true
             },
-            nullAction = { 
+            nullAction = {
                 nullExecuted = true
-            }
+            },
         )
-        
+
         assertFalse(notNullExecuted)
         assertTrue(nullExecuted)
     }
