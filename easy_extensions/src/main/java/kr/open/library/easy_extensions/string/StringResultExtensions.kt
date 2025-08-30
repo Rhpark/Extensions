@@ -93,97 +93,17 @@ public fun String.validateUrlResult(): SimpleResult<Boolean> =
         android.util.Patterns.WEB_URL.matcher(this).matches()
     }
 
-/**
- * Safely converts string to integer and returns a Result
- * 문자열을 안전하게 정수로 변환하고 Result 반환
- *
- * @return SimpleResult.Success(Int) if conversion successful, SimpleResult.Failure on error
- *
- * Example:
- * ```
- * "123".toIntResult()
- *     .onSuccess { number ->
- *         processNumber(number)
- *     }
- *     .onFailure { exception ->
- *         showError("Invalid number format: ${exception.message}")
- *     }
- * ```
- */
-@CheckResult
-public fun String.toIntResult(): SimpleResult<Int> =
-    SimpleResult.runCatching {
-        this.toInt()
-    }
+// REMOVED: toIntResult - Use stdlib's toIntOrNull() instead
+// 제거됨: toIntResult - stdlib의 toIntOrNull() 사용 권장
 
-/**
- * Safely converts string to double and returns a Result
- * 문자열을 안전하게 실수로 변환하고 Result 반환
- *
- * @return SimpleResult.Success(Double) if conversion successful, SimpleResult.Failure on error
- *
- * Example:
- * ```
- * "123.45".toDoubleResult()
- *     .onSuccess { number ->
- *         processDecimal(number)
- *     }
- *     .onFailure { exception ->
- *         showError("Invalid decimal format: ${exception.message}")
- *     }
- * ```
- */
-@CheckResult
-public fun String.toDoubleResult(): SimpleResult<Double> =
-    SimpleResult.runCatching {
-        this.toDouble()
-    }
+// REMOVED: toDoubleResult - Use stdlib's toDoubleOrNull() instead
+// 제거됨: toDoubleResult - stdlib의 toDoubleOrNull() 사용 권장
 
-/**
- * Safely converts string to float and returns a Result
- * 문자열을 안전하게 실수(float)로 변환하고 Result 반환
- *
- * @return SimpleResult.Success(Float) if conversion successful, SimpleResult.Failure on error
- *
- * Example:
- * ```
- * "123.45".toFloatResult()
- *     .onSuccess { number ->
- *         processFloat(number)
- *     }
- *     .onFailure { exception ->
- *         showError("Invalid float format: ${exception.message}")
- *     }
- * ```
- */
-@CheckResult
-public fun String.toFloatResult(): SimpleResult<Float> =
-    SimpleResult.runCatching {
-        this.toFloat()
-    }
+// REMOVED: toFloatResult - Use stdlib's toFloatOrNull() instead
+// 제거됨: toFloatResult - stdlib의 toFloatOrNull() 사용 권장
 
-/**
- * Safely converts string to long and returns a Result
- * 문자열을 안전하게 long으로 변환하고 Result 반환
- *
- * @return SimpleResult.Success(Long) if conversion successful, SimpleResult.Failure on error
- *
- * Example:
- * ```
- * "1234567890123".toLongResult()
- *     .onSuccess { number ->
- *         processLongNumber(number)
- *     }
- *     .onFailure { exception ->
- *         showError("Invalid long format: ${exception.message}")
- *     }
- * ```
- */
-@CheckResult
-public fun String.toLongResult(): SimpleResult<Long> =
-    SimpleResult.runCatching {
-        this.toLong()
-    }
+// REMOVED: toLongResult - Use stdlib's toLongOrNull() instead
+// 제거됨: toLongResult - stdlib의 toLongOrNull() 사용 권장
 
 /**
  * Safely parses date string with given pattern and returns a Result

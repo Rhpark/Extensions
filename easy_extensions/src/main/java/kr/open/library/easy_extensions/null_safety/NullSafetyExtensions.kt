@@ -4,17 +4,8 @@ package kr.open.library.easy_extensions.null_safety
  * Null safety extensions for cleaner and safer null handling
  */
 
-/**
- * Executes the given action if this value is not null and returns the original value
- * More idiomatic version using also() for side effects
- *
- * @param action The action to execute with the non-null value
- * @return The original value for chaining
- *
- * Example:
- * user.ifNotNull { updateProfile(it) }
- */
-public inline fun <T> T?.ifNotNull(action: (T) -> Unit): T? = this?.also(action)
+// REMOVED: ifNotNull - Use stdlib's ?.also { ... } instead
+// 제거됨: ifNotNull - stdlib의 ?.also { ... } 사용 권장
 
 /**
  * Executes the given action if this value is null and returns the original value
@@ -30,16 +21,8 @@ public inline fun <T> T?.ifNull(action: () -> Unit): T? {
     return this
 }
 
-/**
- * Safely casts this object to the specified type T
- *
- * @return The object cast to type T, or null if casting fails
- *
- * Example:
- * val userProfile = response.safeCast<UserProfile>()
- * val errorResponse = response.safeCast<ErrorResponse>()
- */
-public inline fun <reified T> Any?.safeCast(): T? = this as? T
+// REMOVED: safeCast - Use stdlib's as? operator instead
+// 제거됨: safeCast - stdlib의 as? 연산자 사용 권장
 
 /**
  * Returns the first non-null value from the provided values
@@ -83,24 +66,8 @@ public inline fun <T> T?.ifNotNullOrElse(
     return this
 }
 
-/**
- * Returns this value if not null, otherwise returns the result of the default value function
- *
- * @param defaultValue Function that provides the default value
- * @return This value if not null, otherwise the result of defaultValue function
- *
- * Example:
- * val config = userSettings.orElse { getDefaultSettings() }
- */
-public inline fun <T> T?.orElse(defaultValue: () -> T): T = this ?: defaultValue()
+// REMOVED: orElse - Use stdlib's ?: (elvis) operator instead
+// 제거됨: orElse - stdlib의 ?: (elvis) 연산자 사용 권장
 
-/**
- * Returns this value if it's not null and satisfies the predicate, otherwise null
- *
- * @param predicate The condition the value must satisfy
- * @return This value if not null and satisfies predicate, otherwise null
- *
- * Example:
- * val validEmail = email.takeIfNotNull { it.contains("@") }
- */
-public inline fun <T> T?.takeIfNotNull(predicate: (T) -> Boolean): T? = this?.takeIf(predicate)
+// REMOVED: takeIfNotNull - Use stdlib's ?.takeIf { ... } instead
+// 제거됨: takeIfNotNull - stdlib의 ?.takeIf { ... } 사용 권장

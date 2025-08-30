@@ -9,7 +9,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.open.library.easy_extensions.conditional.*
 import kr.open.library.easy_extensions.context.*
-import kr.open.library.easy_extensions.null_safety.ifNotNull
 import kr.open.library.easy_extensions.null_safety.ifNull
 import kr.open.library.easy_extensions.resource.getColorCompat
 import kr.open.library.easy_extensions.resource.getColorSafe
@@ -114,19 +113,20 @@ class MainActivity : AppCompatActivity() {
         // ✅ Result Extensions - 안전한 작업 처리
         // Result Extensions - Safe operation handling
 
-        // String 변환 작업 - String conversion operations
-        val intResult = "123".toIntResult()
-        intResult.onSuccess { number ->
-            toastShowShort("문자열을 숫자로 변환 성공: $number")
-        }.onFailure { exception ->
-            toastShowShort("변환 실패: ${exception.message}")
+        // String 변환 작업 - String conversion operations (stdlib 사용)
+        // Using stdlib instead of custom Result functions
+        val intValue = "123".toIntOrNull()
+        if (intValue != null) {
+            toastShowShort("문자열을 숫자로 변환 성공: $intValue")
+        } else {
+            toastShowShort("변환 실패")
         }
 
-        val invalidResult = "invalid".toIntResult()
-        invalidResult.onSuccess { number ->
-            toastShowShort("변환 성공: $number")
-        }.onFailure { exception ->
-            toastShowShort("예상된 변환 실패: ${exception.javaClass.simpleName}")
+        val invalidValue = "invalid".toIntOrNull()
+        if (invalidValue != null) {
+            toastShowShort("변환 성공: $invalidValue")
+        } else {
+            toastShowShort("예상된 변환 실패: NumberFormat")
         }
 
         // 이메일 검증 - Email validation
@@ -169,16 +169,16 @@ class MainActivity : AppCompatActivity() {
             toastShowShort("날짜 처리 실패: ${exception.message}")
         }
 
-        // Result fold 예제 - Result fold example
-        val numberResult = "42".toIntResult()
-        val doubleResult = numberResult.map { it * 2 }
-        val finalResult =
-            doubleResult.fold(
-                onSuccess = { "성공: 결과는 $it 입니다" },
-                onFailure = { "실패: ${it.message}" },
-            )
+        // stdlib 사용 예제 - Using stdlib approach
+        val numberValue = "42".toIntOrNull()
+        val finalResult = if (numberValue != null) {
+            val doubled = numberValue * 2
+            "성공: 결과는 $doubled 입니다"
+        } else {
+            "실패: 숫자 변환 오류"
+        }
 
-        toastShowShort("Fold 결과: $finalResult")
+        toastShowShort("변환 결과: $finalResult")
     }
 
     private fun demonstrateTimeExtensions() {
@@ -318,9 +318,8 @@ class MainActivity : AppCompatActivity() {
         // ✅ Map 연산 - Map operations
         val userSettings = mapOf("theme" to "dark", "notifications" to "enabled")
         val theme =
-            userSettings["theme"].ifNotNull {
+            userSettings["theme"]?.also {
                 toastShowShort("테마 설정: $it")
-                it
             } ?: "light"
         val language = userSettings["language"] ?: "ko"
 
@@ -332,10 +331,10 @@ class MainActivity : AppCompatActivity() {
         // Null Safety Extensions - Safe null handling
         val userProfile: UserProfile? = getCurrentUser()
 
-        userProfile.ifNotNull { profile ->
+        userProfile?.also { profile ->
             toastShowShort("사용자 로그인: ${profile.name}")
             updateUI(profile.name, profile.email)
-        }.ifNull {
+        } ?: run {
             toastShowShort("사용자가 로그인하지 않음")
             showLoginScreen()
         }
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity() {
         // API 응답 처리 예제
         // API response handling example
         val apiResponse = getApiResponse()
-        apiResponse.ifNotNull { response ->
+        apiResponse?.let { response ->
             when (response) {
                 is UserProfile -> {
                     toastShowShort("API 성공: ${response.name}")
@@ -357,9 +356,7 @@ class MainActivity : AppCompatActivity() {
                     toastShowShort("알 수 없는 응답")
                 }
             }
-        }.ifNull {
-            toastShowShort("API 응답이 null입니다")
-        }
+        } ?: toastShowShort("API 응답이 null입니다")
     }
 
     private fun demonstrateResourceExtensions() {

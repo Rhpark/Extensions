@@ -8,29 +8,20 @@ import org.junit.Test
  * Unit tests for NullSafetyExtensions
  */
 class NullSafetyExtensionsTest {
+    // REMOVED: Tests for ifNotNull - Use stdlib's ?.also { ... } instead
+    // 제거됨: ifNotNull 테스트 - stdlib의 ?.also { ... } 사용 권장
+    
     @Test
-    fun `ifNotNull should execute action when value is not null`() {
+    fun `stdlib also should work as ifNotNull replacement`() {
         val value = "test"
         var actionExecuted = false
 
-        value.ifNotNull {
+        value?.also {
             actionExecuted = true
             assertEquals("test", it)
         }
 
         assertTrue(actionExecuted)
-    }
-
-    @Test
-    fun `ifNotNull should not execute action when value is null`() {
-        val value: String? = null
-        var actionExecuted = false
-
-        value.ifNotNull {
-            actionExecuted = true
-        }
-
-        assertFalse(actionExecuted)
     }
 
     @Test
@@ -57,25 +48,18 @@ class NullSafetyExtensionsTest {
         assertFalse(actionExecuted)
     }
 
+    // REMOVED: Tests for safeCast - Use stdlib's as? operator instead
+    // 제거됨: safeCast 테스트 - stdlib의 as? 연산자 사용 권장
+    
     @Test
-    fun `safeCast should return correct type when casting is valid`() {
+    fun `stdlib as operator should work as safeCast replacement`() {
         val value: Any = "test string"
-        val result = value.safeCast<String>()
+        val result = value as? String
         assertEquals("test string", result)
-    }
-
-    @Test
-    fun `safeCast should return null when casting is invalid`() {
-        val value: Any = 123
-        val result = value.safeCast<String>()
-        assertNull(result)
-    }
-
-    @Test
-    fun `safeCast should return null when value is null`() {
-        val value: Any? = null
-        val result = value.safeCast<String>()
-        assertNull(result)
+        
+        val invalidValue: Any = 123
+        val invalidResult = invalidValue as? String
+        assertNull(invalidResult)
     }
 
     @Test
@@ -129,38 +113,34 @@ class NullSafetyExtensionsTest {
         assertTrue(nullExecuted)
     }
 
+    // REMOVED: Tests for orElse - Use stdlib's ?: (elvis) operator instead
+    // 제거됨: orElse 테스트 - stdlib의 ?: (elvis) 연산자 사용 권장
+    
     @Test
-    fun `orElse should return original value when not null`() {
+    fun `stdlib elvis operator should work as orElse replacement`() {
         val value: String? = "original"
-        val result = value.orElse { "default" }
+        val result = value ?: "default"
         assertEquals("original", result)
+        
+        val nullValue: String? = null
+        val nullResult = nullValue ?: "default"
+        assertEquals("default", nullResult)
     }
 
+    // REMOVED: Tests for takeIfNotNull - Use stdlib's ?.takeIf { ... } instead
+    // 제거됨: takeIfNotNull 테스트 - stdlib의 ?.takeIf { ... } 사용 권장
+    
     @Test
-    fun `orElse should return default value when null`() {
-        val value: String? = null
-        val result = value.orElse { "default" }
-        assertEquals("default", result)
-    }
-
-    @Test
-    fun `takeIfNotNull should return value when not null and predicate is true`() {
+    fun `stdlib takeIf should work as takeIfNotNull replacement`() {
         val value: String? = "test"
-        val result = value.takeIfNotNull { it.startsWith("te") }
+        val result = value?.takeIf { it.startsWith("te") }
         assertEquals("test", result)
-    }
-
-    @Test
-    fun `takeIfNotNull should return null when not null but predicate is false`() {
-        val value: String? = "test"
-        val result = value.takeIfNotNull { it.startsWith("ab") }
-        assertNull(result)
-    }
-
-    @Test
-    fun `takeIfNotNull should return null when value is null`() {
-        val value: String? = null
-        val result = value.takeIfNotNull { it.startsWith("te") }
-        assertNull(result)
+        
+        val falseResult = value?.takeIf { it.startsWith("ab") }
+        assertNull(falseResult)
+        
+        val nullValue: String? = null
+        val nullResult = nullValue?.takeIf { it.startsWith("te") }
+        assertNull(nullResult)
     }
 }
